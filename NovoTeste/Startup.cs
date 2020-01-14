@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using NovoTeste.Models;
+using NovoTeste.Data;
+using NovoTeste.Services;
 
 namespace NovoTeste
 {
@@ -33,14 +37,22 @@ namespace NovoTeste
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDbContext<NovoTesteContext>(options =>
+                    options.UseMySql(Configuration.GetConnectionString("NovoTesteContext"), builder =>
+                        builder.MigrationsAssembly("NovoTeste")));
+            services.AddScoped<SeedingService>();
+            services.AddScoped<SellerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, SeedingService seedingService)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                seedingService.Seed();
+
             }
             else
             {

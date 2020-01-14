@@ -1,6 +1,6 @@
 using System;
 
-namespace NovoTeste.Models
+namespace NovoTeste.Models.ViewModels
 {
     public class ErrorViewModel
     {
